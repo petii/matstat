@@ -1,3 +1,4 @@
+setwd("D:\\Karosszék\\Google Drive\\elte\\2017_2018_2\\stat\\matstat")
 
 ##########
 #2. gyakorlat
@@ -26,10 +27,9 @@ xx=rep(0,times=9)
 for(i in 1:9)
   xx[i]=quantile(x,0.33,type=i)
 
-
 #a saját adataink
 
-diak=read.table("D:\\oktatas\\2018\\inf_a\\diak_18a.csv",sep=";",header=T,dec=",")
+diak=read.table("diak_18a.csv",sep=";",header=T,dec=",")
 
 summary(diak)
 #alapstat
@@ -107,3 +107,41 @@ lines(Fn, verticals=F, col.points='green',
 ## és 1/[n*min(X1,...Xn)]
 #megvizsgálni, melyik a jobb
 ##tobb mintaelemszamra, ismetlesre
+
+#tapasztalati elo.fv
+par(mfrow=c(1,1))
+x <- rexp(12)
+Fn <- ecdf(x)
+plot(Fn,xlim=c(0,6))
+x=c(0:200)
+x=(x)/6
+lines(x,pexp(x),col=2)
+
+x <- rexp(120)
+Fn <- ecdf(x)
+#lines(Fn,col=3,pch=0.5)
+
+lines(Fn, verticals=F, col.points='blue',
+      col.hor='red', col.vert='bisque',cex=0.3)
+
+x <- rexp(480)
+Fn <- ecdf(x)
+#lines(Fn,col=3,pch=0.5)
+
+lines(Fn, verticals=F, col.points='green',
+      col.hor='red', col.vert='bisque',cex=0.1)
+
+n=100
+la=3
+par=exp(-la)
+ism=100
+becs1=rep(0,times=ism)
+becs2=becs1
+for (i in 1:ism)
+{
+  x=rpois(n,la)
+  becs1[i]=exp(-mean(x))
+  becs2[i]=sum(x==0)/n
+}
+summary(becs1)
+summary(becs2)
