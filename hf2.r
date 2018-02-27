@@ -5,13 +5,17 @@
 ##tobb mintaelemszamra, ismetlesre
 
 #hibafuggveny
-err <- function(lambda, estimations) {
+err2 <- function(lambda, estimations) {
   return (min(c(abs(lambda-mean(estimations)),min(abs(lambda-quantile(estimations))))))
+}
+
+err <- function(l,e) {
+  return (min(c(abs(l-mean(e)),abs(l-median(e)))))
 }
 
 la=3
 
-ns=10*c(1:30) 
+ns=10*c(1:50) 
 dim = length(ns)
 
 meansMean = rep(0,times=dim)
@@ -54,11 +58,22 @@ errsMin = rep(0,times=dim)
 #}
 
 par(mfrow=c(1,1))
-plot(ns/10,rep(la,times=dim),type="l",ylim=c(0,max(medianMin)),ylab = "")
-points(meansMean)
+plot(ns/10,
+     rep(la,times=dim),
+     type="l",
+     ylim=c(0,max(medianMin)),
+     ylab = "",
+     xlab = "size of sample/number of tries")
+title("Estimation of the exponential distribution's parameter")
+points(meansMean,col="blue1")
 #points(medianMean)
 #points(meansMin)
-points(medianMin)
-lines(errsMean)
-lines(errsMin)
+points(medianMin,col="red1")
+lines(errsMean,col="blue2")
+lines(errsMin,col="red2")
+legend(locator(1),#x=3,
+       legend=c("exp. dist. parameter","1/avg estimate","1/(n*min) estimate","1/avg error","1/(n*min) error"),
+       col=c("black","blue1","red1","blue2","red2"),
+       lty=c(1,0,0,1,1),
+       pch=c(NA,1,1,NA,NA))
 
