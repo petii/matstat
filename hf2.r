@@ -63,7 +63,7 @@ plot(ns/10,
      type="l",
      ylim=c(0,max(medianMin)),
      ylab = "",
-     xlab = "size of sample/number of tries")
+     xlab = "size of sample/number of tries (x10)")
 title("Estimation of the exponential distribution's parameter")
 points(meansMean,col="blue1")
 #points(medianMean)
