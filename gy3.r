@@ -17,6 +17,7 @@ plot(density(x,bw=1/3,kernel="r"))
 
 x=rnorm(100)
 plot(density(x))
+plot(density(x,kernel="r"))
 
 #####
 #becslések vizsgálata
@@ -26,19 +27,26 @@ plot(density(x))
 n=c(10,40,160,640)
 est=matrix(0,1000,4)
 alpha=4
-for(j in 1:1000)
-{
-  for (i in 1:length(n))
-  {x=runif(n[i])^{-1/alpha} #HF2:milyen eloszlású az x?
-  est[j,i]=var(x)}
+xs<-list()
+for(j in 1:1000) {
+  for (i in 1:length(n))  {
+    x=runif(n[i])^{-1/alpha} 
+    #HF2:milyen eloszlású az x?
+    est[j,i]=var(x)
+  }
 }
+x=runif(1000)^{-1/alpha} 
+#x=x[x<20]
+hist(x,freq = FALSE,nclass = 30)
+lines(density(x))
+xx=c(0:(max(x)*100))/100
+lines(dexp(xx,))
 
 v<-list()
 v$"10"<-est[,1]
 v$"40"<-est[,2]
 v$"160"<-est[,3]
 v$"640"<-est[,4]
-
 
 boxplot(v,main="Becslések")
 
@@ -65,3 +73,4 @@ boxplot(v,main="Becslések")
 
 #HF3: más eloszlásokra is megnézni a szórásbecslés változását az elemszám
 #függvényében
+

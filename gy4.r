@@ -1,3 +1,4 @@
+
 ##########
 #gyak4
 ##########
@@ -9,12 +10,15 @@ for(j in 1:100)
 {
   for (i in 1:length(n))
   {x=rnorm(n[i])
-  yd=density(x)$y
-  xd=density(x)$x
+  yy=density(x,adjust=1.2)
+  yd=yy$y
+  xd=yy$x
   est[j,i]=max(abs(yd-dnorm(xd)))}
 }
 
-
+#HF1:
+#a/ hogyan tudnánk ábrázolni?
+#b/ nézzük meg különböző adjust értékekre és nézzük meg, melyik a legjobb
 
 ###
 #Cauchy pelda
@@ -66,3 +70,4 @@ mean((mu.hat - mu)^2)
 #
 mean((mu.atl - mu)^2)
 mean((mu.twiddle - mu)^2)
+#HF2: tehát akkor melyik is a jobb és mennyivel?
