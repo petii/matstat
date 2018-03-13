@@ -21,12 +21,11 @@ for(j in 1:100) {
 boxplot(est)
 
 #b/ nézzük meg különböző adjust értékekre és nézzük meg, melyik a legjobb
-n=10
+n=640
 adj=c(0.5,1,1.2,1.5,2)
 est=matrix(0,100,length(adj))
 for(j in 1:100) {
-  #for (i in 1:length(n)) {
-  for (i in length(adj)) {
+  for (i in 1:length(adj)) {
     x=rnorm(n)
     yy=density(x,adjust=adj[i])
     yd=yy$y
