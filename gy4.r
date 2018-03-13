@@ -18,8 +18,7 @@ for(j in 1:100) {
 
 #HF1:
 #a/ hogyan tudnánk ábrázolni?
-boxplot(est)
-
+boxplot(est,names=n)
 #b/ nézzük meg különböző adjust értékekre és nézzük meg, melyik a legjobb
 n=640
 adj=c(0.5,1,1.2,1.5,2)
@@ -33,7 +32,7 @@ for(j in 1:100) {
     est[j,i]=max(abs(yd-dnorm(xd)))
   }
 }
-boxplot(est)
+boxplot(est,names=adj)
 
 ###
 #Cauchy pelda
