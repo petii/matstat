@@ -144,3 +144,56 @@ left
 right
 error
 sd(xdat)
+
+##súly
+xdat=dat[,2]
+error <- qt(0.975,n-1)*sd(xdat)/sqrt(n)
+left <- mean(xdat)-error
+right <- mean(xdat)+error
+
+left 
+right
+error
+
+##cipõméret
+xdat=dat[,3]
+error <- qt(0.975,n-1)*sd(xdat)/sqrt(n)
+left <- mean(xdat)-error
+right <- mean(xdat)+error
+
+left 
+right
+error
+
+##tanulási idõ
+xdat=dat[,5]
+typeof(xdat)
+error <- qt(0.975,n-1)*sd(xdat)/sqrt(n)
+#for some reason error, don't know why
+left <- mean(xdat)-error
+right <- mean(xdat)+error
+
+left 
+right
+error
+
+##utazási idõ
+xdat=dat[,6]
+error <- qt(0.975,n-1)*sd(xdat)/sqrt(n)
+left <- mean(xdat)-error
+right <- mean(xdat)+error
+
+left 
+right
+error
+
+##valszám jegy
+xdat=dat[,7]
+error <- qt(0.975,n-1)*sd(xdat)/sqrt(n)
+left <- mean(xdat)-error
+right <- mean(xdat)+error
+
+left 
+right
+error
+
