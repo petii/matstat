@@ -132,7 +132,7 @@ talal
 ########
 #konf.int
 #######
-dat<-read.table("D:\\OKTATAS\\2018\\inf_a\\diak_18a.csv",sep=";",header=T)
+dat<-read.table("diak_18a.csv",sep=";",header=T)
 n=dim(dat)[1]
 xdat=dat[,1]
 ##testmagasság
@@ -168,10 +168,21 @@ error
 ##tanulási idõ
 xdat=dat[,5]
 typeof(xdat)
+xdat
+
 error <- qt(0.975,n-1)*sd(xdat)/sqrt(n)
 #for some reason error, don't know why
 left <- mean(xdat)-error
 right <- mean(xdat)+error
+
+# making a simple vector from factorized data
+tmp <- as.numeric(levels(xdat)[xdat])
+# some fields contain values like "3,5" which results in NA
+# a better solution would be to replace the commas with dots in the csv file
+tmp <- tmp[!is.na(tmp)]
+error <- qt(0.975,n-1)*sd(tmp)/sqrt(n)
+left <- mean(tmp)-error
+right <- mean(tmp)+error
 
 left 
 right
@@ -196,4 +207,3 @@ right <- mean(xdat)+error
 left 
 right
 error
-
