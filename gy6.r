@@ -179,6 +179,7 @@ right
 error
 
 ##utazási idõ
+#gamma would be better instead of normal distribution
 xdat=dat[,6]
 error <- qt(0.975,n-1)*sd(xdat)/sqrt(n)
 left <- mean(xdat)-error
