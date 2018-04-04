@@ -1,0 +1,59 @@
+---
+title: "Matstat gy6 1. feladat"
+output:
+  html_document:
+    df_print: paged
+---
+
+Minta: $1.8,2,3,3.2,3.4$
+
+a) \[ f(x) = \begin{cases} \frac{2x}{a^2} & 0\le x\le a \\ 0 & különben \end{cases} \]
+ML becslés $a$-ra:
+\[
+L(a,x_1,\dots,x_5) = \prod_{i=1}^{5}
+\frac{2x_i}{a^2}\cdot I(0\le x_i \le a) = \frac{2^5\cdot\prod x_i}{a^{10}} \cdot I(0\le x_i \le a, \forall i)\]
+\[ l=(5\log 2 + \sum \log x_i - 10\log a) \cdot I(\dots) \\
+ \downarrow \partial_a \\
+ \partial_al = -\frac{10}{a} \cdot I(0\le x_i \le a) \]
+Minél nagyobb $a$, annál kisebb $L$ értéke
+
+$\Rightarrow$ maximum: $a$ minimális \(\Rightarrow \hat a = \max x_i (= 3.4 \text{jelen esetben}) \)
+
+$\hat a$ eloszlása $\Leftrightarrow \max x_i$ eloszlása 
+
+\[  \begin{aligned} 
+F_{\hat a}(k) = & P(\max x_i < k ) = P(x_1 < k,\dots ,x_5< k) =  P(x_1 < k) \cdots P(x_5< k) = P(x_i< k)^5 = \left[ \frac{k^2}{a^2} \right]^5 \\
+ F(k) = & P(x_i < k) \int_0^k \frac{2x}{a^2}dx= \left[ \frac{x^2}{a^2} \right]_0^k = \frac{k^2}{a^2} (0\le k\le a) 
+\\ 
+F(k) = & 1 (k>a)
+\\
+F(k) = & 0 (k< 0)
+\end{aligned} \]
+
+Standard eset: $a=1$
+\[ P(\max x_i < z_1) = 0.95 = \frac{z_1^{10}}{a^{10}} \Rightarrow z_1 = \sqrt[10]{0.95} \]
+
+\begin{align}
+a=1 & \quad & a=c \\
+\max x_i < 0.993 & \quad & \max < 0.994 \cdot c
+\end{align}
+
+\begin{align}
+\max x_i = & 3.4 \\
+P(a\in [3.4 ; 4.59]) = & 0.95 \\
+3.4 =  & 0.994 \cdot c \\
+3.42 = & c
+\end{align}
+
+valami P max x_i < z_2 = 0.05 cucc
+
+
+
+
+
+
+
+
+
+
+

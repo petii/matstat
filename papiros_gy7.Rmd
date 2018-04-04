@@ -1,0 +1,96 @@
+---
+title: "Matstat 7.gy"
+output: html_notebook
+---
+
+Note: T distribution table-bõl is vannak értékek
+
+1.feladat 
+
+
+Minta: $14.8,12.2,16.8,17.1$ $\sim N(m,\delta^2)$
+
+\begin{align}
+H_0 : m=17 & \quad & a = 0.05 \\
+H_1 : m< 17
+\end{align}
+
+a) $\delta = 2$
+
+$u$-próba
+\[
+\begin{aligned}
+u = \sqrt n \cdot \frac{\overline{x} . m_0}{5} \overset{H_0}{\sim} N(0,1) &\\
+u = 2 \cdot \frac{15.825 - 17}{2} = -1.775 &\\
+&1.65 \rightarrow 95\%-os\\
+&\Downarrow \\
+&c_1 = -1.65 \rightarrow 5\%-os
+\end{aligned}
+\]
+
+b)
+\[ \hat\delta = \sqrt{\frac{\sum (x_i - \overline x )^2}{n-1}} = 2.26 \]
+\[
+\begin{aligned}
+95\%\text{-os kritérium:} 2.26 \\
+\Downarrow \\
+\text{szimmetria miatt az alsó} \\
+5\%\text{-os kritikus érték:} -2.363
+\end{aligned}
+\]
+
+2. feladat 
+
+összefüggnek az adatok
+$\Rightarrow$ különbség $0.2,0.3,0.7,0.4,1.1$
+
+$m:$ a különbség várható értéke
+
+$\overline x = \frac{27}{5} = 0.54$
+
+$\hat\delta = 0.366$
+
+\[\begin{aligned}
+H_0 : m=0  \\
+H_1 : m\neq 0 \\
+& \delta = \sqrt n \cdot \frac{\overline x - m_0}{\hat\delta} = \sqrt 5 \cdot \frac{0.54}{0.365} = 3.308 \overset{H_0}{\sim}t_{\delta-1} (5\text{ vagy }\delta?)
+\end{aligned}
+\]
+
+\[
+\Rightarrow 3.301\in [-2.776;2.776] \Rightarrow \text{elutasítjuk } H_0\text{-t}\qquad x\sim t_4 \\
+0.975 \text{ kvartilis} = 2.776 \\
+0.025 \text{ kvartilis} = -2.776 \\
+\Downarrow \\
+P(-2.776 < x < 2.776) = 0.95
+\]
+
+3.feladat
+
+$p=0.1$
+
+Most: \[
+10\text{-bõl} 2 \Rightarrow 0.2 \\
+\downarrow
+Bin(10,p)
+\]
+\[
+\begin{aligned}
+H_0:p=0.1
+& & \text{Ha $H_0$ igaz: jégesõk száma } Bin(10,x)\sim X \\
+H_1:p>0.1& &\downarrow \text{kritikus értékek} \\
+&&\text{milyen $c$-re: }  P(X<c) = 0.95 \\
+&&\Downarrow \\
+&&c=3
+\end{aligned}
+\]
+
+Ha a jégesõk száma $< 3 \Rightarrow H_0$-t elfogadjuk
+
+$\ge 3 \Rightarrow$ elutasítjuk, és $H_1$-t fogadjuk el
+
+\[P(X<3)=0.95\text{, feltéve, hogy }X\sim Bin(10,0.1) \\
+\Downarrow \\
+P(x>3) = 0.013 = \alpha
+\]
+
