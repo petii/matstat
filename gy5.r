@@ -1,11 +1,43 @@
 
+# neg log likelihood sfvbol
+mlogl <- function(mu, x) {
+  sum(-dcauchy(x, location = mu, log = TRUE))
+}
+# es kepletbol
+mlogl2 <- function(mu, x) {
+  sum(log(1 + (x - mu)^2))
+}
+#reprodukalhato legyen a szimulacio
+n <- 30
+set.seed(42)
+x <- rcauchy(n)
+#µ=0 de mi becsuljuk
+
+# Szimulacio: melyik a jobb: a median vagy az ML becsles
+nsim <- 100
+mu.hat=rep(0,times=n)
+mu.twiddle=mu.hat
+mu.atl=mu.hat
+mu <- 0
+for (i in 1:nsim) {
+  xsim <- rcauchy(n, location = mu)
+  mu.start <- median(xsim)
+  out <- nlm(mlogl, mu.start, x = xsim)
+  mu.hat[i] <- out$estimate
+  mu.twiddle[i] <- mu.start
+  mu.atl[i]=mean(xsim)
+}
+mean((mu.hat - mu)^2)
+#
+mean((mu.atl - mu)^2)
+mean((mu.twiddle - mu)^2)
+#HF2: tehát akkor melyik is a jobb és mennyivel?
 ########################
 #5.gyak
 ########################
 
 #Az MSE-hanyados:
 mean((mu.hat - mu)^2)/mean((mu.twiddle - mu)^2)
-
 # asymptotic relative efficiency (ARE) 
 # az MLE a pontosabb
 ################
@@ -74,3 +106,6 @@ talal
 #
 #HF reprodukalni ezt a Gamma eloszlasra 
 #ML becsles, konfidencia intervallum
+
+x = c(0:50)
+plot(x,dgamma(x,))
