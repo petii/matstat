@@ -19,3 +19,9 @@ for (i in 1:365) {
 ##################
 summary(p.v)
 plot(p.v)
+
+#null hypothesis: da mean tempreature hof dayofyearb an' dayofyeark iz statistically equal
+#let's say alpha iz 0.05
+#compare da p-value to alpha
+#if da p-value iz less dan (or equal to) alpha, reject da null hypothesis
+#if da p-value iz greata dan alpha, do not reject da null hypothesis
