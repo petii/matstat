@@ -19,7 +19,18 @@
 \end{abstract}
 
 \section{feladat}
-200 elemű mintánk van Bin(20,3p-0.5) eloszlásból. Az átlaguk 8. Adjunk a) 95\%-os, b) 97,5\%-os megbízhatósági konfidencia intervallumot p értékére. (Feltehető, hogy az átlag eloszlása normális).
+200 elemű mintánk van Bin(20,3p-0.5) eloszlásból. Az átlaguk 8. Adjunk a) 95\%-os, b) 97,5\%-os megbízhatósági konfidencia intervallumot p értékére. (Feltehető, hogy az átlag eloszlása normális). \\
+a) $1-\alpha = 95\% \Rightarrow\alpha = 0.05$ \\
+$\overline{x} = 8$ \\
+$\delta^2 = 20$ \\
+$z_{1 - \frac{\alpha}{2}} = z_{0.975} \approx 0.78$\\
+Konfidencia intervallum: 
+\(
+\left[  - z_{0.975} \cdot \frac{}{} \right]
+\)
+
+
+
 
 \section{feladat}
 Értelmezze az alábbi számítógépes programot és eredményt.
@@ -37,16 +48,50 @@ for (i in 1:m) {
 \end{lstlisting}
 Az eredmény: talal=456
 
+500-szor megism\'etelj\"uk azt a k\'is\'erletet, hogy gamma eloszl\'asb\'ol vesz\"unk egy 20 elem\H u mintat, \'es ebb\H ol a 95\%-os konfidenciaintervallumot adunk meg.
+A tal\'al eredm\'eny az, hogy az 500 ism\'etl\'esb\H ol h\'anyszor szerepelt az a=5 \'ert\'ek ebben az intervallumban.
+  
 \section{feladat}
 Adott egy 3 elemű minta $X_1, X_2, X_3$. 
 Két hipotézisünk van:
 \[ \begin{aligned}
-H0: & P(X_i=2)=\frac{1}{3}, & P(X_i=3)=\frac{1}{3},& P(X_i=10)=\frac{1}{3} \\
-H1: & P(X_i=2)=\frac{1}{5}, & P(X_i=3)=\frac{1}{5},& P(X_i=10)=\frac{3}{5} \\
+H_0: & P(X_i=2)=\frac{1}{3}, & P(X_i=3)=\frac{1}{3},& P(X_i=10)=\frac{1}{3} \\
+H_1: & P(X_i=2)=\frac{1}{5}, & P(X_i=3)=\frac{1}{5},& P(X_i=10)=\frac{3}{5} \\
 \end{aligned} \]
-Határozzuk meg annak a próbának a tulajdonságait, amely akkor utasítja el a
-nullhipotézist, ha legalább 2-szer jön ki a 10-es érték. 
+Határozzuk meg annak a próbának a tulajdonságait, amely akkor utasítja el a nullhipotézist, ha legalább 2-szer jön ki a 10-es érték. 
+
+Tulajdons\'agok:
+\begin{itemize}
+	\item Terjedelem: elsőfajú hiba valószínűségek felső
+	határa. \\
+	Els\H ofaj\'u hiba valószínűsége: $\alpha = P_\theta(\aleph_k) (\theta \in \Theta_0)$ \\
+	$\aleph_k:\text{ kritikus tartom\'any, azaz amire elutas\'itjuk a nullhipot\'ezist} $\\ 
+	$\aleph_k= \left\{ (10,10,10), (10,10,k), (10,k,10), (k,10,10) | k\in {2,3} \right\}$ \\
+	$\alpha = \frac{7}{3^3} = 0.\dot 2 5 \dot 9  \le 0.26 $ ???
+	
+	\item Konzisztencia: az erőfv. 1-hez tart ($\forall \theta \in \Theta_1$) ????????????
+\end{itemize}
+
 
 \section{feladat}
-Milyen opciói vannak a t.test függvénynek?
+Milyen opciói vannak a t.test függvénynek? \\
+t.test param\'eterei:
+\begin{itemize}
+	\item x : nem\"ures sz\'amvektor (adatok)
+	\item y : opcion\'alis nem\"ures sz\'amvektor (adatok)
+	\item alternative: mi az alternat\'iv hipot\'ezis. Lehets\'eges \'ert\'ekek:
+	\begin{itemize}
+		\item t (two.sided)
+		\item g (greater)
+		\item l (less)
+	\end{itemize}
+	\item mu : a val\'odi \'atlag (vagy k\"ul\"onbs\'eg k\'etmint\'as pr\'oba eset\'en)
+	\item paired : logikai, p\'aros t-pr\'oba vagy nem]
+	\item var.equal : logikai, egyenl\H o-e a variancia
+	\item conf.level : konfidencia intervallum
+	\item formula : 'baloldal ~ jobboldal' alak\'u formula, ahol a baloldal sz\'am adatok, a jobboldal pedig faktor ami a kapcsol\'od\'o csoportokat adja
+	\item data : opcion\'alis m\'atrix vagy data frame vagy hasonl\'o amiben a 'formula'-beli v\'altoz\'ok vannak
+	\item subset : opcion\'alis vektor, a mint\'anak milyen r\'eszhalmaz\'at haszn\'aljuk
+	\item na.action : mi t\"ort\'enjen ha NA-val tal\'alkozunk
+\end{itemize}
 \end{document}
