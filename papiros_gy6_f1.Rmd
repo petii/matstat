@@ -23,7 +23,7 @@ $\hat a$ eloszlása $\Leftrightarrow \max x_i$ eloszlása
 
 \[  \begin{aligned} 
 F_{\hat a}(k) = & P(\max x_i < k ) = P(x_1 < k,\dots ,x_5< k) =  P(x_1 < k) \cdots P(x_5< k) = P(x_i< k)^5 = \left[ \frac{k^2}{a^2} \right]^5 \\
- F(k) = & P(x_i < k) \int_0^k \frac{2x}{a^2}dx= \left[ \frac{x^2}{a^2} \right]_0^k = \frac{k^2}{a^2} (0\le k\le a) 
+ F(k) = & P(x_i < k) = \int_0^k \frac{2x}{a^2}dx= \left[ \frac{x^2}{a^2} \right]_0^k = \frac{k^2}{a^2} (0\le k\le a) 
 \\ 
 F(k) = & 1 (k>a)
 \\
