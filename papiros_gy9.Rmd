@@ -6,6 +6,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 # 04.18. feladatsor
 ## 4.feladat
 \[
@@ -66,7 +67,7 @@ Ha $\overline x > d \Rightarrow H_0\ elfogad$
 
 Ha $\overline x < d \Rightarrow H_0\ elutasít$
 
-## 5.feladat
+# 5.feladat
 $H_0$: kocka szabályos $\Rightarrow P(A_i) = \frac{1}{6}$
 
 $A_i$: ennyi i-est dobtunk
@@ -88,3 +89,35 @@ elméleti  | 20 | 20 | 20 | 20 | 20| 20
 
 Kritikus érték: $11.07$
 \[\chi^2 < 11.07 \Rightarrow H_0 \text{ elfogadjuk}  \]
+
+#04.25. feladatsor
+## 1.feladat
+
+hibaszám|0|1|2|3|4|5|6|7|8+
+---|--|--|--|--|--|--|--|---|--------
+darab|44|52|36|20|12|5|0|1|0
+
+Célszerű összevonni az 5+ értékeket
+
+
+## 2.feladat
+csapadék hőmérséklet|kevés|átlagos|sok|tapasztalat
+----|--|--|----|--
+hűvös|15|10|5|0.3
+átlagos|10|10|20|0.4
+meleg|5|20|5|0.3
+tapasztalat|0.3|0.4|0.3|n=100
+
+Elmélet:
+$T_{i,j}=q_i \cdot p_j \cdot n$
+
+a | k | á | s
+-|-|-|-
+h|9|12|9
+á|12|16|12
+m|9|12|9
+
+
+\[
+\chi^2 = \sum_{cellák} \frac{(tap-elm)^2}{elm} = ... = \text{túl nagy} \sim \chi^2_{3\cdot 3-1} \quad \text{Kritikus érték:} 15.51
+\]
