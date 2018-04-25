@@ -1,0 +1,66 @@
+---
+title: "Matstat 04.25."
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+4.feladat
+\[
+\varphi(x)=\begin{cases}
+0&x<c\\
+p&x=c\\
+1&x>c
+\end{cases}
+\]
+\[Geo(p) \quad P(X=4) = p\cdot(1-p)^n-1 \\
+H_0:p=\frac{1}{2} \\
+H_1:p=\frac{2}{3}\]
+
+$H_0$ esetén 4 minta átlaga mi lehet?
+\[E(X) = \frac{1}{p} \rightarrow 2 (p=\frac{1}{2}) \\
+\overset{\text{momentum módszer}}{\Rightarrow} \hat p = \frac{1}{E(X)}
+\Rightarrow\hat p = \frac{1}{x}
+\]
+\[
+\begin{cases}
+0&\hat p<c\\
+q&\hat p=c\\
+1&\hat p>c
+\end{cases}\\
+\downarrow \\
+\begin{cases}
+0&\overline{x}<\frac{1}{c}\\
+q&\overline{x}=\frac{1}{c}\\
+1&\overline{x}>\frac{1}{c}
+\end{cases}
+\]
+
+\[
+\frac{\overline{x}-m}{\sqrt n \cdot 5} \longrightarrow N(0,1) \text{ (Standard Normálishoz tart) }
+\]
+
+\[
+D^2(x)=\frac{1-p}{p^2}
+\]
+
+Ez(ek) alapján:
+Arra vagyunk kíváncsiak, hogy mintaátlagvalószínűség hol lesz kisebb mint ...
+\[ P\left(\frac{\overline x - \frac{1}{p}}{\sqrt n \cdot \sqrt{\frac{1-p}{p^2}}} <  \frac{d - \frac{1}{p}}{\sqrt n \cdot \sqrt{\frac{1-p}{p^2}}}\right) =  0.95\] 
+Ez a kvantilis $1.65$ (táblázatból)
+
+Ha $H_0$ teljesül: $p=\frac{1}{2}$
+\[  \frac{d - \frac{1}{p}}{\sqrt n \cdot \sqrt{\frac{1-p}{p^2}}} = 1.65 \\
+\Downarrow p\ beírva, átrendezve \\
+d = 1.65 \cdot 2\cdot \sqrt 2 + 2
+\]
+Ha <valami> kisebb akkor $H_0$ teljesül, ha nagyobb akkor $H_1$
+
+Valamilyen valószínűség mellett vagz elfogadjuk vagy elutasítjuk. Mivel valami határeloszlás tételt használtunk, a standardizálás miatt. (???)
+
+Úgy néz ki a próba, hogy:
+
+Ha $\overline x < d \Rightarrow H_0\ elfogad$ 
+
+Ha $\overline x > d \Rightarrow H_0\ elutasít$
