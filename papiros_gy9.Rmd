@@ -6,7 +6,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-4.feladat
+# 04.18. feladatsor
+## 4.feladat
 \[
 \varphi(x)=\begin{cases}
 0&x<c\\
@@ -64,3 +65,26 @@ Valamilyen valószínűség mellett vagz elfogadjuk vagy elutasítjuk. Mivel val
 Ha $\overline x > d \Rightarrow H_0\ elfogad$ 
 
 Ha $\overline x < d \Rightarrow H_0\ elutasít$
+
+## 5.feladat
+$H_0$: kocka szabályos $\Rightarrow P(A_i) = \frac{1}{6}$
+
+$A_i$: ennyi i-est dobtunk
+
+$H_1$: nem szabályos
+
+Mit is szeretnénk pontosan?
+
+típus      | 1  | 2  | 3  | 4  | 5 | 6 
+---------  | -- | -- | -- | -- | --| --
+tapasztalt | 16 | 26 | 18 | 25 | 19| 16
+elméleti  | 20 | 20 | 20 | 20 | 20| 20
+
+\[
+\chi^2 = \sum \frac{(x_i-20)^2}{20} = \dots = \frac{98}{20} \approx 4.9
+\]
+
+Állítás: $\chi^2 \overset{H_0}{\sim} \chi^2_{r-1} \underset{r=6}{=} \chi_5^2$
+
+Kritikus érték: $11.07$
+\[\chi^2 < 11.07 \Rightarrow H_0 \text{ elfogadjuk}  \]
