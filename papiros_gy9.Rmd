@@ -61,6 +61,6 @@ Valamilyen valószínűség mellett vagz elfogadjuk vagy elutasítjuk. Mivel val
 
 Úgy néz ki a próba, hogy:
 
-Ha $\overline x < d \Rightarrow H_0\ elfogad$ 
+Ha $\overline x > d \Rightarrow H_0\ elfogad$ 
 
-Ha $\overline x > d \Rightarrow H_0\ elutasít$
+Ha $\overline x < d \Rightarrow H_0\ elutasít$
