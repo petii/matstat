@@ -21,31 +21,33 @@ wilcox.test(x, y)
 ####
 #chi-négyzet próba
 ####
-diak<-read.table("D:\\OKTATAS\\2016\\inf_a\\dat16.csv",sep=";",header=T)
+diak<-read.table("diak_18a.csv",sep=";",dec=",",header=T)
 
 #nem
 #H0: egyenletes elo.
-chisq.test(table(diak[,3]))
+chisq.test(table(diak[,4]))
 #tovabbi komponensek
-chisq.test(table(diak[,3]))$observed
-chisq.test(table(diak[,3]))$expected
-chisq.test(table(diak[,3]))$residuals
+chisq.test(table(diak[,4]))$observed
+chisq.test(table(diak[,4]))$expected
+chisq.test(table(diak[,4]))$residuals
 
 #szimulalt krit ertekkel
-chisq.test(table(diak[,3]),simulate.p.value=T)
+chisq.test(table(diak[,4]),simulate.p.value=T)
 
 #normalitasvizsgalat
 #itt nincs tablazat
-u1=hist(diak[,5],xlab="jegy",ylab="gyakoriság",main="Valszám",breaks=c(1:6)-1/2)
-hist(diak[,1],xlab="kg",ylab="gyakoriság",main="Súly",breaks=10*c(1:10)+25)
-hist(diak[,2],xlab="cm",ylab="gyakoriság",main="Testmagasság",breaks=5*c(1:12)+142.5)
-hist(diak[,4],xlab="",ylab="gyakoriság",main="Cipőméret",breaks=c(1:14)+67/2)
+u1=hist(diak[,7],xlab="jegy",ylab="gyakoriság",main="Valszám",breaks=c(1:6)-1/2)
+hist(diak[,2],xlab="kg",ylab="gyakoriság",main="Súly",breaks=10*c(2:10)+25)
+hist(diak[,1],xlab="cm",ylab="gyakoriság",main="Testmagasság",breaks=5*c(1:12)+142.5)
+hist(diak[,3],xlab="",ylab="gyakoriság",main="Cipőméret",breaks=c(1:16)+67/2)
 
-hist(diak[,6],xlab="",ylab="gyakoriság",main="Tan, idő",breaks=2*c(0:11))
-hist(diak[,7],xlab="perc",ylab="gyakoriság",main="Utazási ido",breaks=30*c(1:9)-30)
+hist(diak[,5],xlab="",ylab="gyakoriság",main="Tan, idő",breaks=2*c(0:16))
+hist(diak[,6],xlab="perc",ylab="gyakoriság",main="Utazási ido",breaks=30*c(1:9)-30)
 
+#chi negyzet próbával vizsgálat:
+# kvatilisek alapján szétbontjuk a normális eloszlás (sűrűségfüggvényét)
 
-n<-4;j<-1 #testsuly
+n<-4;j<-2 #testsuly
 #intervallum: 4 db ill. a valtozo sorszama
 q<-c(1:n)/n
 h<-c(-Inf,qnorm(q))
@@ -54,16 +56,19 @@ sig=sd(diak[,j])
 h<-h*sig+mu
 #ezek hataroljak 
 nu<-rep(0,times=n)
-for (i in 1:n)
-  nu[i]<-
-  sum((diak[,j]<h[i+1]) & (diak[,j]>=h[i]))
-
+for (i in 1:n) {
+  nu[i] <- sum((diak[,j]<h[i+1]) & (diak[,j]>=h[i]))
+}
 
 #vart gyak:
 np<-sum(nu)*rep(1/n,times=n)
 chi<-sum((nu-np)^2/np)
 
+np
+chi
 
+#paraméter becslés esetén le kell vonni az eloszlási fokból
+#(ahány dolgot becsültünk)
 #a p-ertek:
 p<-1-pchisq(chi,n-3)
 p
