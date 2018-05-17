@@ -9,3 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Adatok
+```{r}
+data <- read.csv('data/Pokemon.csv')
+data <- data[,c(2:length(data))]
+data <- data[!grepl("Mega",data$Name),]
+labels(data)[2]
+```
+
+# Gener\'aci\'o szerinti bont\'as
+
+```{r}
+gens <- split(data,data$Generation)
+gens
+```
