@@ -1,6 +1,6 @@
 ---
-title: "Statisztikai Elemzes"
-author: "Vida Peter"
+title: "Statisztikai Elemzés"
+author: "Vida Péter"
 date: "16 May 2018"
 output: html_document
 ---
@@ -10,16 +10,101 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Adatok
+Az adataink a `data/Pokemon.csv` fájl tartalmazza. Soronként egy-egy pokémonról a következőket tudjuk:
+
+* Name: a neve
+* Type.1: az elsődleges típusa
+* Type.2: a másodlagos típusa (lehet üres is)
+* Total: az alábbi [tulajdonágok](https://bulbapedia.bulbagarden.net/wiki/Statistic) összege:
+  + HP: életerő pontok
+  + Attack: támadóérték
+  + Defense: védelmi érték
+  + Sp..Atk: speciális támadás
+  + Sp..Def: speciális védekezés
+  + Speed: sebesség
+* Generation: melyik generációból való.
+* Legendary: legendás pokémon-e
+
 ```{r}
 data <- read.csv('data/Pokemon.csv')
-data <- data[,c(2:length(data))]
-data <- data[!grepl("Mega",data$Name),]
 labels(data)[2]
 ```
 
-# Gener\'aci\'o szerinti bont\'as
+Az eredeti adathalmazban van egy sorszám oszlop is, de mivel az R dataframe sorszámozza a sorokat, ez redundáns információ.
 
 ```{r}
-gens <- split(data,data$Generation)
-gens
+data <- data[,c(2:length(data))]
 ```
+
+Az adatok közül nem vettem figyelembe a pokémonok [mega evolúcióját](https://bulbapedia.bulbagarden.net/wiki/Mega_Evolution), mivel ez egy ideiglenes állapot. Ez `r length(data[grepl("Mega",data$Name),])` sor törlését jelentette.
+
+```{r}
+data <- data[!grepl("Mega",data$Name),]
+```
+
+A [legendás pokémonok](https://bulbapedia.bulbagarden.net/wiki/Legendary_Pokémon) nagytöbbségében jobb tulajdonságokkal rendelkeznek, így az adathalmazunkat érdemes szétválasztani.
+
+```{r}
+legendsplit <- split(data,data$Legendary)
+normal <- legendsplit$False
+legendary <- legendsplit$True
+```
+
+Így a normális és a legendás pokémonok számának megoszlása: `r length(normal$Name)` és `r length(legendary$Name)`.
+
+# Normális és legendás pokémonok közti különbségek
+
+## Tulajdonságok
+
+```{r}
+layout(matrix(c(1,1,1,2,4,6,3,5,7),3,3))
+labels <- c('Normal','Legendary')
+labels.short <- c('L','N')
+boxplot(normal$Total,legendary$Total,main="Total",names = labels)
+boxplot(legendary$HP,normal$HP,main="HP",names = labels.short,horizontal = TRUE)
+boxplot(legendary$Attack,normal$Attack,main="Attack",names = labels.short,horizontal = TRUE)
+boxplot(legendary$Defense,normal$Defense,main="Defense",names = labels.short,horizontal = TRUE)
+boxplot(legendary$Speed,normal$Speed,main="Speed",names = labels.short,horizontal = TRUE)
+boxplot(legendary$Sp..Atk,normal$Sp..Atk,main="Special Attack",names = labels.short,horizontal = TRUE)
+boxplot(legendary$Sp..Def,normal$Sp..Def,main="Special Defense",names = labels.short,horizontal = TRUE)
+```
+
+Ez alapján azt láthatjuk, hogy többségében a legendás pokémonok jobb tulajdonsagokkal rendelkeznek a normálisakkal szemben.
+
+## Típusok
+
+A pokémonoknak maximum két típusa lehet.
+
+```{r}
+norm.type1.summary <- summary(normal$Type.1)
+norm.type2.summary <- summary(normal$Type.2)[-1]
+norm.types.summary <- t(cbind(as.matrix(norm.type1.summary),as.matrix(norm.type2.summary)))
+norm.types.summary.normaled <- norm.types.summary/sum(norm.types.summary)
+leg.type1.summary <- summary(legendary$Type.1)
+leg.type2.summary <- summary(legendary$Type.2)[-1]
+leg.types.summary <- t(cbind(as.matrix(leg.type1.summary),as.matrix(leg.type2.summary)))
+leg.types.summary.normaled <- leg.types.summary/sum(leg.types.summary)
+types.summary <- cbind(colSums(norm.types.summary),colSums(leg.types.summary))
+types.summary.normaled <- cbind(types.summary[,1]/sum(types.summary[,1]),types.summary[,2]/sum(types.summary[,2]))
+
+maxval <- max(max(colSums(norm.types.summary.normaled)),max(colSums(leg.types.summary.normaled)))
+maxval <- c(0,maxval)
+
+label.x <- 'Density'
+legendtext.1 <- c('Type.1','Type.2')
+
+layout(matrix(c(1,2),1,2,byrow = TRUE))
+barplot(norm.types.summary.normaled,las=1,horiz = TRUE,xlim = maxval,main = 'Types in normal pokemons',xlab = label.x)
+barplot(leg.types.summary.normaled,las=1,horiz = TRUE,xlim = maxval,legend.text = legendtext.1,main = 'Types in legendary pokemons',xlab = label.x)
+```
+
+Legendás pokémonokban jellemzőbb a második típus megléte, illetve
+
+```{r}
+layout(matrix(1,1,1))
+barplot(t(types.summary.normaled),beside = TRUE,las = 2,legend.text = labels)
+```
+
+Észrevehető, hogy legendás pokémonok gyakrabban sárkány, repülő illetve psychic típusúak.
+
+# Generáció szerinti bontás
