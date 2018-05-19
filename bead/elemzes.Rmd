@@ -71,19 +71,69 @@ boxplot(legendary$Sp..Def,normal$Sp..Def,main="Special Defense",names = labels.s
 
 Ez alapján azt láthatjuk, hogy többségében a legendás pokémonok jobb tulajdonsagokkal rendelkeznek a normálisakkal szemben.
 
+### Eloszlások
+
+```{r}
+layout(matrix(c(1,1,2,3),2,2,byrow = TRUE))
+hist(data$Total,freq = FALSE)
+lines(density(data$Total))
+hist(normal$Total,freq = FALSE)
+lines(density(normal$Total))
+hist(legendary$Total,freq = FALSE)
+lines(density(legendary$Total))
+## special traits
+dens.norm <- density(normal$HP)
+dens.leg <- density(legendary$HP)
+limits.x <- c(min(min(normal$HP),min(legendary$HP)),max(max(normal$HP),max(legendary$HP)))
+limits.y <- c(0,max(max(dens.norm$y),max(dens.leg$y)))
+layout(matrix(c(1,2),1,2,byrow = FALSE))
+hist(normal$HP,freq = FALSE,xlim = limits.x, ylim = limits.y)
+lines(density(normal$HP))
+hist(legendary$HP,freq = FALSE,xlim = limits.x, ylim = limits.y,)
+lines(density(legendary$HP))
+
+
+dens.norm <- density(normal$Attack)
+dens.leg <- density(legendary$Attack)
+limits.x <- c(min(min(normal$Attack),min(legendary$Attack)),max(max(normal$Attack),max(legendary$Attack)))
+limits.y <- c(0,max(max(dens.norm$y),max(dens.leg$y)))
+hist(normal$Attack,freq = FALSE,xlim = limits.x, ylim = limits.y)
+lines(density(normal$Attack))
+hist(legendary$Attack,freq = FALSE,xlim = limits.x, ylim = limits.y)
+lines(density(legendary$Attack))
+
+hist(normal$Defense,freq = FALSE)
+lines(density(normal$Defense))
+hist(legendary$Defense,freq = FALSE)
+lines(density(legendary$Defense))
+
+hist(normal$Speed,freq = FALSE)
+lines(density(normal$Speed))
+hist(legendary$Speed,freq = FALSE)
+lines(density(legendary$Speed))
+
+```
+
 ## Típusok
 
-A pokémonoknak maximum két típusa lehet.
+A pokémonoknak legalább egy és maximum két típusa lehet. A típusnak a támadásoknál van szerepe, a különféle képességek más más típusra máshogy hathatnak. ("It's super effective!")
+Mivel a két típussal rendelkező pokémonok mindkét típusuknak megfelelően erősebbek és gyengébbek a más típusokkal szemben, a típus szerinti összegzésbe mindkét típus szerint beleszámoltam őket. Az adatok összessége így több mint az eredeti, de talán átfogóbb képet kaphatunk.
+
+### Másodlagos típus
+
+Először az elsődleges és másodlagos típusok megoszlásást külön a normális és a legendás pokémonok között vizsgáltam.
 
 ```{r}
 norm.type1.summary <- summary(normal$Type.1)
 norm.type2.summary <- summary(normal$Type.2)[-1]
 norm.types.summary <- t(cbind(as.matrix(norm.type1.summary),as.matrix(norm.type2.summary)))
 norm.types.summary.normaled <- norm.types.summary/sum(norm.types.summary)
+norm.types.summary.normaled.ordered <- norm.types.summary.normaled[,order(colSums(norm.types.summary.normaled),decreasing = TRUE)]
 leg.type1.summary <- summary(legendary$Type.1)
 leg.type2.summary <- summary(legendary$Type.2)[-1]
 leg.types.summary <- t(cbind(as.matrix(leg.type1.summary),as.matrix(leg.type2.summary)))
 leg.types.summary.normaled <- leg.types.summary/sum(leg.types.summary)
+leg.types.summary.normaled.ordered <- leg.types.summary.normaled[,order(colSums(leg.types.summary.normaled),decreasing = TRUE)]
 types.summary <- cbind(colSums(norm.types.summary),colSums(leg.types.summary))
 types.summary.normaled <- cbind(types.summary[,1]/sum(types.summary[,1]),types.summary[,2]/sum(types.summary[,2]))
 
@@ -94,11 +144,25 @@ label.x <- 'Density'
 legendtext.1 <- c('Type.1','Type.2')
 
 layout(matrix(c(1,2),1,2,byrow = TRUE))
-barplot(norm.types.summary.normaled,las=1,horiz = TRUE,xlim = maxval,main = 'Types in normal pokemons',xlab = label.x)
-barplot(leg.types.summary.normaled,las=1,horiz = TRUE,xlim = maxval,legend.text = legendtext.1,main = 'Types in legendary pokemons',xlab = label.x)
+barplot(norm.types.summary.normaled.ordered,las=1,horiz = TRUE,legend.text = legendtext.1,main = 'Types in normal pokemons',xlab = label.x)
+barplot(leg.types.summary.normaled.ordered,las=1,horiz = TRUE,xlim = maxval,legend.text = legendtext.1,main = 'Types in legendary pokemons',xlab = label.x)
 ```
 
-Legendás pokémonokban jellemzőbb a második típus megléte, illetve
+```{r} 
+num.water <- sum(norm.types.summary[,colnames(norm.types.summary)=='Water'])
+num.normal <- sum(norm.types.summary[,colnames(norm.types.summary)=='Normal'])
+num.sum <- sum(norm.types.summary)
+```
+
+* A repülő típus főleg másodlagosként szerepel
+* Normális pokémonoknál a legyakoribb típus a víz, de ez `r num.water` darabot jelent, míg a második leggyakoribb, a "Normal" `r num.normal` darab (az `r num.sum`-ből), ez pedig nem tekinthető szignifikáns különbségnek (`r abs(num.water-num.normal)/num.sum*100`%).
+* Legendás pokémonoknál jellemzőbbnek tűnik a második típus megléte. 
+  + A legendás pokémonoknak `r sum(leg.type2.summary)/length(legendary$Type.2)*100`%-a,
+  + Ezzel szemben a normálisoknak `r sum(norm.type2.summary)/length(normal$Type.2)*100`%-a
+  rendelkezik másodlagos típussal
+* 
+
+### Normális és legendás típusok
 
 ```{r}
 layout(matrix(1,1,1))
