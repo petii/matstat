@@ -73,46 +73,55 @@ Ez alapján azt láthatjuk, hogy többségében a legendás pokémonok jobb tula
 
 ### Eloszlások
 
+Tudjuk, hogy a legendás pokémonok tulajdonságai alapvetően magasabb értékűek a normális pokémonokénál. De vajon van-e hasonlóság abban, hogy az adott intervallumaikukon hogyan oszlanak el?
+
+Ehhez a különböző tulajdonságok átlagát transzformáljuk valamely közös pontba, mondjuk legyen a $0$. Majd kétmintás Kolmogorov-Szmirnov próbával teszteljük az eloszlások hasonlóságát, $95\%$-os szignifikancia szint mellett.
+
 ```{r}
-layout(matrix(c(1,1,2,3),2,2,byrow = TRUE))
-hist(data$Total,freq = FALSE)
-lines(density(data$Total))
-hist(normal$Total,freq = FALSE)
-lines(density(normal$Total))
-hist(legendary$Total,freq = FALSE)
-lines(density(legendary$Total))
-## special traits
-dens.norm <- density(normal$HP)
-dens.leg <- density(legendary$HP)
-limits.x <- c(min(min(normal$HP),min(legendary$HP)),max(max(normal$HP),max(legendary$HP)))
-limits.y <- c(0,max(max(dens.norm$y),max(dens.leg$y)))
-layout(matrix(c(1,2),1,2,byrow = FALSE))
-hist(normal$HP,freq = FALSE,xlim = limits.x, ylim = limits.y)
-lines(density(normal$HP))
-hist(legendary$HP,freq = FALSE,xlim = limits.x, ylim = limits.y,)
-lines(density(legendary$HP))
+tests.ks <- list()
 
+for (i in c('HP','Attack','Defense','Speed','Sp..Atk','Sp..Def')) {
+  layout(matrix(c(1:2),1,2,byrow = TRUE))
+  tmp.norm <- normal[[i]] - mean(normal[[i]])
+  tmp.legend <- legendary[[i]] - mean(legendary[[i]])
+  dens.norm <- density(tmp.norm)
+  dens.leg <- density(tmp.legend)
+  limits.x <- c(min(min(tmp.norm),min(tmp.legend)),max(max(tmp.norm),max(tmp.legend)))
+  limits.y <- c(0,max(max(dens.norm$y),max(dens.leg$y)))
+  #layout(matrix(c(1,2),1,2,byrow = FALSE))
+  #hist(tmp.norm,freq = FALSE,xlim = limits.x, ylim = limits.y,main = i,xlab = '')
+  plot(dens.norm,xlim = limits.x, ylim = limits.y,main = i,xlab = '')
+  #hist(tmp.legend,freq = FALSE,xlim = limits.x, ylim = limits.y,add=T,border = 2)
+  lines(dens.leg,col = 2)
+  plot(ecdf(tmp.norm),main='Tapasztalati eloszlásfüggvények')
+  plot(ecdf(tmp.legend),add=TRUE,col=2)
+  
+  tests.ks[[i]] <- ks.test(tmp.norm,tmp.legend)
+}
 
-dens.norm <- density(normal$Attack)
-dens.leg <- density(legendary$Attack)
-limits.x <- c(min(min(normal$Attack),min(legendary$Attack)),max(max(normal$Attack),max(legendary$Attack)))
-limits.y <- c(0,max(max(dens.norm$y),max(dens.leg$y)))
-hist(normal$Attack,freq = FALSE,xlim = limits.x, ylim = limits.y)
-lines(density(normal$Attack))
-hist(legendary$Attack,freq = FALSE,xlim = limits.x, ylim = limits.y)
-lines(density(legendary$Attack))
+ks.value <- function(alpha,n,m) {
+  sqrt(-1/2*log(alpha/2)) * sqrt((n+m)/(n*m))
+}
 
-hist(normal$Defense,freq = FALSE)
-lines(density(normal$Defense))
-hist(legendary$Defense,freq = FALSE)
-lines(density(legendary$Defense))
-
-hist(normal$Speed,freq = FALSE)
-lines(density(normal$Speed))
-hist(legendary$Speed,freq = FALSE)
-lines(density(legendary$Speed))
-
+#tests.f
+alpha = 0.05
+c <- ks.value(alpha,length(normal$Name),length(legendary$Name))
 ```
+
+$95\%$-os szignifikancia szint mellett a kritikus tartomány: $|t| > `r c`$.
+
+* Életerő
+  + A próba statisztika értéke $`r tests.ks$HP$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
+* Támadás  
+  + A próba statisztika értéke $`r tests.ks$Attack$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
+* Védekezés
+  + A próba statisztika értéke $`r tests.ks$Defense$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
+* Sebesség
+  + A próba statisztika értéke $`r tests.ks$Speed$statistic` > `r c`$, tehát elvetettük a nullhipotézist.
+* Speciális Támadás
+  + A próba statisztika értéke $`r tests.ks$Sp..Atk$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
+* Speciális Védekezés
+  + A próba statisztika értéke $`r tests.ks$Sp..Def$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
 
 ## Típusok
 
@@ -160,9 +169,6 @@ num.sum <- sum(norm.types.summary)
   + A legendás pokémonoknak `r sum(leg.type2.summary)/length(legendary$Type.2)*100`%-a,
   + Ezzel szemben a normálisoknak `r sum(norm.type2.summary)/length(normal$Type.2)*100`%-a
   rendelkezik másodlagos típussal
-* 
-
-### Normális és legendás típusok
 
 ```{r}
 layout(matrix(1,1,1))
@@ -172,3 +178,17 @@ barplot(t(types.summary.normaled),beside = TRUE,las = 2,legend.text = labels)
 Észrevehető, hogy legendás pokémonok gyakrabban sárkány, repülő illetve psychic típusúak.
 
 # Generáció szerinti bontás
+ 
+```{r}
+gens <- split(data,data$Generation)
+```
+
+## Tulajdonságok
+
+```{r}
+for (i in gens) {
+  hist(i$Total)
+}
+```
+
+## Típusok
