@@ -2,7 +2,9 @@
 title: "Statisztikai Elemzés"
 author: "Vida Péter"
 date: "16 May 2018"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -10,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Adatok
+A adathalmaz [erről a linkről származik](https://www.kaggle.com/abcsds/pokemon) (https://www.kaggle.com/abcsds/pokemon).
+
 Az adataink a `data/Pokemon.csv` fájl tartalmazza. Soronként egy-egy pokémonról a következőket tudjuk:
 
 * Name: a neve
@@ -30,12 +34,6 @@ data <- read.csv('data/Pokemon.csv')
 labels(data)[2]
 ```
 
-Az eredeti adathalmazban van egy sorszám oszlop is, de mivel az R dataframe sorszámozza a sorokat, ez redundáns információ.
-
-```{r}
-data <- data[,c(2:length(data))]
-```
-
 Az adatok közül nem vettem figyelembe a pokémonok [mega evolúcióját](https://bulbapedia.bulbagarden.net/wiki/Mega_Evolution), mivel ez egy ideiglenes állapot. Ez `r length(data[grepl("Mega",data$Name,fixed=TRUE),])` sor törlését jelentette.
 Hasonló elgondolásból a pokémonok [primal formája](https://bulbapedia.bulbagarden.net/wiki/Primal_Reversion) is kikerült az adathalmazból.
 Illetve a [Hoopa](https://bulbapedia.bulbagarden.net/wiki/Hoopa_(Pok%C3%A9mon)) "Unbound" alakja is.
@@ -46,29 +44,24 @@ data <- data[!grepl("Primal",data$Name,fixed=TRUE),]
 data <- data[!grepl("Unbound",data$Name,fixed=TRUE),]
 ```
 
-Az adatokban a pokémonok, melyeknek különböző formái vannak, külön pokémonoknak számítanak. A duplikátumok elkerülése végett, ezeket a formákat kiszűrtem, a tulajdonságaikat pedig átlagoltam.
+Az adatokban a pokémonok, melyeknek különböző formái vannak, külön pokémonoknak számítanak. A duplikátumok elkerülése végett, ezeket a formákat kiszűrtem, a tulajdonságaikat pedig átlagoltam. Ilyen pokémonok voltak:
 
 ```{r}
-data.Name <- gsub("(.)([[:upper:]])", "\\1 \\2", data$Name)
-for (i in data.Name) {
-  if (!grepl('.',i,fixed = TRUE)) { # Mr. Mime and Mime Jr.
-    r <- strsplit(i,' ')[[1]]
-    if (length(r) > 1) {
-      #print(r[1])
-      s <- data[grepl(r[1],data$Name,fixed = TRUE),]
-      levels(data$Name) <- c(levels(data$Name),r[1])
-      statlab <- c('Total','HP','Attack','Defense','Sp..Atk','Sp..Def','Speed')
-      tmp.avg.stat <- list()
-      base <- s[1,]
-      #print(base)
-      base$Name <- r[1]
-      for (l in statlab) {
-        tmp.avg.stat[[l]] <- mean(s[[l]])
-        base[[l]] <- tmp.avg.stat[[l]]
-      }
-      data<-data[!grepl(r[1],data$Name,fixed = TRUE),]
-      data[nrow(data)+1,] <- base
+for (x in levels(factor(data$X.))) {
+  rows <- data[data$X. == x,]
+  if (nrow(rows) > 1) {
+    data <- data[data$X. != x,]
+    name <- rows$Name[1]
+    name <- strsplit(gsub("(.)([[:upper:]])", "\\1 \\2", name),' ')[[1]][[1]]
+    print(name)
+    levels(data$Name) <- c(levels(data$Name),name)
+    statlab <- c('Total','HP','Attack','Defense','Sp..Atk','Sp..Def','Speed')
+    base <- rows[1,]
+    base$Name <- name
+    for (l in statlab) {
+      base[[l]] <- mean(rows[[l]])
     }
+    data[nrow(data)+1,] <- base
   }
 }
 ```
@@ -141,20 +134,20 @@ alpha = 0.05
 c <- ks.value(alpha,length(normal$Name),length(legendary$Name))
 ```
 
-$95\%$-os szignifikancia szint mellett a kritikus tartomány: $|t| > `r c`$.
+$95\%$-os szignifikancia szint mellett a kritikus tartomány: $|D| > `r c`$.
 
 * Életerő
-  + A próba statisztika értéke $`r tests.ks$HP$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
+  + A próba statisztika értéke $`r tests.ks$HP$statistic` \le `r c`$, tehát nem vetettük el a nullhipotézist.
 * Támadás  
-  + A próba statisztika értéke $`r tests.ks$Attack$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
+  + A próba statisztika értéke $`r tests.ks$Attack$statistic` \le `r c`$, tehát nem vetettük el a nullhipotézist.
 * Védekezés
-  + A próba statisztika értéke $`r tests.ks$Defense$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
+  + A próba statisztika értéke $`r tests.ks$Defense$statistic` \le `r c`$, tehát nem vetettük el a nullhipotézist.
 * Sebesség
   + A próba statisztika értéke $`r tests.ks$Speed$statistic` > `r c`$, tehát elvetettük a nullhipotézist.
 * Speciális Támadás
-  + A próba statisztika értéke $`r tests.ks$Sp..Atk$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
+  + A próba statisztika értéke $`r tests.ks$Sp..Atk$statistic` \le `r c`$, tehát nem vetettük el a nullhipotézist.
 * Speciális Védekezés
-  + A próba statisztika értéke $`r tests.ks$Sp..Def$statistic` < `r c`$, tehát nem vetettük el a nullhipotézist.
+  + A próba statisztika értéke $`r tests.ks$Sp..Def$statistic` \le `r c`$, tehát nem vetettük el a nullhipotézist.
 
 ## Típusok
 
@@ -250,35 +243,31 @@ gen7.num.cum <- regr(num.cum.model$coefficients,7)
 A modell alapján a 7. generációban `r gen7.num` új pokémon lesz, azaz összesen `r sum(c(poke.num,gen7.num))`. A kumulált modell szerint a 7. generációban összesen `r gen7.num.cum` darab $(\Delta = `r abs(sum(c(poke.num,gen7.num)) - gen7.num.cum)`)$.
 A [valódi 7. generációban](https://bulbapedia.bulbagarden.net/wiki/Generation) ezzel szemben 86 új pokémon volt, így lett összesen 807.
 
+Tehát ha nem a kumulált pokémon számot néztük, pontosabb becslést kapunk.
+
 Ha a modellünket kiegészítjük a 7. generáció pokémonjainak számával a 8. generációra az alábbi becslést kapjuk.
 
 ```{r}
-poke.num <- rep(0,6)
-poke.num.cum <- rep(0,6)
-gen.list <- c(1:length(data.gens))
-for (i in gen.list) {
-  poke.num[i] <- length(data.gens[[i]]$Name)
-  poke.num.cum[i] <- sum(poke.num[1:i])
-}
+gen7.num.exact <- 86
+gen.list.ext <- c(1:7)
+poke.num.ext <- c(poke.num,gen7.num.exact)
+plot(poke.num.ext)
+legend('topright', legend = c('Eredeti','Kiegészített'), col=c(2,1),lty = 1)
+num.ext.model <- lm(poke.num.ext~gen.list.ext)
+lines(num.ext.model$fitted.values)
+lines(regr(num.model$coefficients,c(1:7)),col=2)
 
-regr <- function(coefs,x) coefs[1] + x * coefs[2]
-
-plot(poke.num)
-num.model <- lm(poke.num~gen.list)
-lines(num.model$fitted.values)
-#lines(regr(num.model$coefficients,c(1:6)))
-
-plot(poke.num.cum)
-num.cum.model <- lm(poke.num.cum~gen.list)
-lines(num.cum.model$fitted.values)
-
-#regr <- function(coefs,x) sum(c(1,x)*coefs) 
-gen7.num <- regr(num.model$coefficients,7)
-gen7.num.cum <- regr(num.cum.model$coefficients,7)
-
+gen8.num <- c(0,0)
+gen8.num[1] <- regr(num.model$coefficients,8)
+gen8.num[2] <- regr(num.ext.model$coefficients,8)
+#num.model$coefficients - num.ext.model$coefficients
 ```
 
+Ez alapján a modell alapján a becslés a 8. generáció új pokémonjainak számára $`r gen8.num[2]`$, míg az előző modell alapján $`r gen8.num[1]`$ $(\Delta=`r abs(gen8.num[1]-gen8.num[2])`)$.
+
 ## Tulajdonságok
+
+Generációkra lebontva a legendás pokémonok száma elenyésző, így őket nem vettem bele a vizsgálatba a továbbiakban.
 
 ```{r}
 #gen1 <- list(both = data.gens$'1', normal = normal.gens$'1', legendary = legendary.gens$'1')
@@ -288,11 +277,63 @@ gen3 <- normal.gens$'3'
 gen4 <- normal.gens$'4'
 gen5 <- normal.gens$'5'
 gen6 <- normal.gens$'6'
-boxplot(gen1$Total,gen2$Total,gen3$Total,gen4$Total,gen5$Total,gen6$Total,main='Generációk össz tulajdonságai',names = names(data.gens))
+boxplot(gen1$Total,gen2$Total,gen3$Total,gen4$Total,gen5$Total,gen6$Total,main='Generációk össz tulajdonságai',names = names(data.gens),col = c(2:7))
 layout(matrix(c(1:6),2,3,byrow = TRUE))
 for (i in stats.names) {
-  boxplot(gen1[[i]],gen2[[i]],gen3[[i]],gen4[[i]],gen5[[i]],gen6[[i]],main=i,names = names(data.gens))
+  boxplot(gen1[[i]],gen2[[i]],gen3[[i]],gen4[[i]],gen5[[i]],gen6[[i]],main=i,names = names(data.gens),col = c(2:7))
 }
 ```
 
+Innen azt vehetjük észre, hogy a negyedik generációban összességében erősebb pokémonok érkeztek.
+
 ## Típusok
+
+Itt arra voltam kíváncsi, hogy vannak-e különböző típus trendek a különböző generációkban.
+
+```{r}
+gens.types.summary <- NULL
+gens.types.summary.normaled <- NULL
+
+for (gen in normal.gens) {
+  #print(i$Type.1)
+
+gen.type1.summary <- summary(gen$Type.1)
+gen.type2.summary <- summary(gen$Type.2)[-1]
+gen.types.summary <- t(cbind(as.matrix(gen.type1.summary),as.matrix(gen.type2.summary)))
+types.sum <- colSums(gen.types.summary)
+types.summary.normaled <- colSums(gen.types.summary) / nrow(gen) 
+gens.types.summary <- cbind(gens.types.summary,types.sum)
+gens.types.summary.normaled <- cbind(gens.types.summary.normaled,types.summary.normaled)
+
+#barplot(types.summary)
+}
+#gens.types.summary <- t(gens.types.summary)
+gens.types.summary.normaled <- t(gens.types.summary.normaled)
+#barplot(gens.types.summary,horiz = FALSE,las=2,beside = TRUE)
+barplot(gens.types.summary.normaled,horiz = FALSE,las=2,beside = TRUE,col=c(2:7))
+```
+
+
+* Az első generációban a méreg és a víz típusú pokémonok a gyakoriak, de a méreg típus csak az első generációban volt ilyen meghatározó.
+* A második generációban a repülő pokémonok száma kiugró.
+* A hatodik generációban pedig a "Fairy" típus örvendett nagy népszerűségnek.
+
+### Próba
+
+Legyen a nullhipotézisünk, hogy a pokémon típusa nem függ attól hogy hanyadik generációs.
+
+```{r}
+alpha <- 0.05
+gens.types.summary
+res <- chisq.test(gens.types.summary)
+crit <- qchisq(alpha,res$parameter)
+res
+```
+
+A próbához tartozó kritikus tartományunk $`r alpha*100`\%$-os szignifikancia szint mellett : $\chi^2 > `r crit`$.
+A próba eredménye $`r res$statistic` > `r crit`$, tehát a nullhipotézist elvetjük, és a pokémon típusa függ attól, hogy hanyadik generációs.
+
+# A dokumentumról
+Ez a dokumentum [R Studio](https://www.rstudio.com/)-ban készült, a forrása egy `.Rmd` (R Markdown) fájl (mellékelve). 
+A dokumentumban szereplő kódrészletek a generálásakor kiértékelődtek, és azok kimenete látszik.
+A csatolt `.r` fájlban a dokumentumban szereplő kódrészletek vannak összegyűjtve.
