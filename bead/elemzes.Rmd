@@ -80,7 +80,9 @@ Ehhez a különböző tulajdonságok átlagát transzformáljuk valamely közös
 ```{r}
 tests.ks <- list()
 
-for (i in c('HP','Attack','Defense','Speed','Sp..Atk','Sp..Def')) {
+stats.names <- c('HP','Attack','Defense','Speed','Sp..Atk','Sp..Def')
+
+for (i in stats.names) {
   layout(matrix(c(1:2),1,2,byrow = TRUE))
   tmp.norm <- normal[[i]] - mean(normal[[i]])
   tmp.legend <- legendary[[i]] - mean(legendary[[i]])
@@ -180,14 +182,46 @@ barplot(t(types.summary.normaled),beside = TRUE,las = 2,legend.text = labels)
 # Generáció szerinti bontás
  
 ```{r}
-gens <- split(data,data$Generation)
+data.gens <- split(data,data$Generation)
+normal.gens <- split(normal,normal$Generation)
+legendary.gens <- split(legendary,legendary$Generation)
+```
+
+## Pokémonok száma
+
+```{r}
+poke.num <- rep(0,6)
+poke.num.cum <- rep(0,6)
+gen.list <- c(1:length(data.gens))
+for (i in gen.list) {
+  poke.num[i] <- length(data.gens[[i]]$Name)
+  poke.num.cum[i] <- sum(poke.num[1:i])
+}
+
+plot(poke.num)
+num.model <- lm(poke.num~gen.list)
+lines(num.model$fitted.values)
+
+plot(poke.num.cum)
+num.cum.model <- lm(poke.num.cum~gen.list)
+lines(num.cum.model$fitted.values)
+
 ```
 
 ## Tulajdonságok
 
 ```{r}
-for (i in gens) {
-  hist(i$Total)
+#gen1 <- list(both = data.gens$'1', normal = normal.gens$'1', legendary = legendary.gens$'1')
+gen1 <- normal.gens$'1'
+gen2 <- normal.gens$'2'
+gen3 <- normal.gens$'3'
+gen4 <- normal.gens$'4'
+gen5 <- normal.gens$'5'
+gen6 <- normal.gens$'6'
+boxplot(gen1$Total,gen2$Total,gen3$Total,gen4$Total,gen5$Total,gen6$Total,main='Generációk össz tulajdonságai',names = names(data.gens))
+layout(matrix(c(1:6),2,3,byrow = TRUE))
+for (i in stats.names) {
+  boxplot(gen1[[i]],gen2[[i]],gen3[[i]],gen4[[i]],gen5[[i]],gen6[[i]],main=i,names = names(data.gens))
 }
 ```
 
