@@ -36,10 +36,41 @@ Az eredeti adathalmazban van egy sorszám oszlop is, de mivel az R dataframe sor
 data <- data[,c(2:length(data))]
 ```
 
-Az adatok közül nem vettem figyelembe a pokémonok [mega evolúcióját](https://bulbapedia.bulbagarden.net/wiki/Mega_Evolution), mivel ez egy ideiglenes állapot. Ez `r length(data[grepl("Mega",data$Name),])` sor törlését jelentette.
+Az adatok közül nem vettem figyelembe a pokémonok [mega evolúcióját](https://bulbapedia.bulbagarden.net/wiki/Mega_Evolution), mivel ez egy ideiglenes állapot. Ez `r length(data[grepl("Mega",data$Name,fixed=TRUE),])` sor törlését jelentette.
+Hasonló elgondolásból a pokémonok [primal formája](https://bulbapedia.bulbagarden.net/wiki/Primal_Reversion) is kikerült az adathalmazból.
+Illetve a [Hoopa](https://bulbapedia.bulbagarden.net/wiki/Hoopa_(Pok%C3%A9mon)) "Unbound" alakja is.
 
 ```{r}
-data <- data[!grepl("Mega",data$Name),]
+data <- data[!grepl("Mega",data$Name,fixed=TRUE),]
+data <- data[!grepl("Primal",data$Name,fixed=TRUE),]
+data <- data[!grepl("Unbound",data$Name,fixed=TRUE),]
+```
+
+Az adatokban a pokémonok, melyeknek különböző formái vannak, külön pokémonoknak számítanak. A duplikátumok elkerülése végett, ezeket a formákat kiszűrtem, a tulajdonságaikat pedig átlagoltam.
+
+```{r}
+data.Name <- gsub("(.)([[:upper:]])", "\\1 \\2", data$Name)
+for (i in data.Name) {
+  if (!grepl('.',i,fixed = TRUE)) { # Mr. Mime and Mime Jr.
+    r <- strsplit(i,' ')[[1]]
+    if (length(r) > 1) {
+      #print(r[1])
+      s <- data[grepl(r[1],data$Name,fixed = TRUE),]
+      levels(data$Name) <- c(levels(data$Name),r[1])
+      statlab <- c('Total','HP','Attack','Defense','Sp..Atk','Sp..Def','Speed')
+      tmp.avg.stat <- list()
+      base <- s[1,]
+      #print(base)
+      base$Name <- r[1]
+      for (l in statlab) {
+        tmp.avg.stat[[l]] <- mean(s[[l]])
+        base[[l]] <- tmp.avg.stat[[l]]
+      }
+      data<-data[!grepl(r[1],data$Name,fixed = TRUE),]
+      data[nrow(data)+1,] <- base
+    }
+  }
+}
 ```
 
 A [legendás pokémonok](https://bulbapedia.bulbagarden.net/wiki/Legendary_Pokémon) nagytöbbségében jobb tulajdonságokkal rendelkeznek, így az adathalmazunkat érdemes szétválasztani.
@@ -189,6 +220,8 @@ legendary.gens <- split(legendary,legendary$Generation)
 
 ## Pokémonok száma
 
+Megvizsgáltam, hogy a generációkban hogyan oszlik meg az új pokémonok száma, és erre lineáris modell illesztésével előrejelezni, hogy a következő 
+
 ```{r}
 poke.num <- rep(0,6)
 poke.num.cum <- rep(0,6)
@@ -198,13 +231,50 @@ for (i in gen.list) {
   poke.num.cum[i] <- sum(poke.num[1:i])
 }
 
+regr <- function(coefs,x) coefs[1] + x * coefs[2]
+
 plot(poke.num)
 num.model <- lm(poke.num~gen.list)
 lines(num.model$fitted.values)
+#lines(regr(num.model$coefficients,c(1:6)))
 
 plot(poke.num.cum)
 num.cum.model <- lm(poke.num.cum~gen.list)
 lines(num.cum.model$fitted.values)
+
+#regr <- function(coefs,x) sum(c(1,x)*coefs) 
+gen7.num <- regr(num.model$coefficients,7)
+gen7.num.cum <- regr(num.cum.model$coefficients,7)
+```
+
+A modell alapján a 7. generációban `r gen7.num` új pokémon lesz, azaz összesen `r sum(c(poke.num,gen7.num))`. A kumulált modell szerint a 7. generációban összesen `r gen7.num.cum` darab $(\Delta = `r abs(sum(c(poke.num,gen7.num)) - gen7.num.cum)`)$.
+A [valódi 7. generációban](https://bulbapedia.bulbagarden.net/wiki/Generation) ezzel szemben 86 új pokémon volt, így lett összesen 807.
+
+Ha a modellünket kiegészítjük a 7. generáció pokémonjainak számával a 8. generációra az alábbi becslést kapjuk.
+
+```{r}
+poke.num <- rep(0,6)
+poke.num.cum <- rep(0,6)
+gen.list <- c(1:length(data.gens))
+for (i in gen.list) {
+  poke.num[i] <- length(data.gens[[i]]$Name)
+  poke.num.cum[i] <- sum(poke.num[1:i])
+}
+
+regr <- function(coefs,x) coefs[1] + x * coefs[2]
+
+plot(poke.num)
+num.model <- lm(poke.num~gen.list)
+lines(num.model$fitted.values)
+#lines(regr(num.model$coefficients,c(1:6)))
+
+plot(poke.num.cum)
+num.cum.model <- lm(poke.num.cum~gen.list)
+lines(num.cum.model$fitted.values)
+
+#regr <- function(coefs,x) sum(c(1,x)*coefs) 
+gen7.num <- regr(num.model$coefficients,7)
+gen7.num.cum <- regr(num.cum.model$coefficients,7)
 
 ```
 
