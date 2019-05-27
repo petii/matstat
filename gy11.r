@@ -145,7 +145,7 @@ lines(loess.smooth(t, atl, span = 1/3, degree = 1,
 
 
 #sajat adataink
-diak<-read.table("diak_18a.csv",sep=";",header=T,dec=",")
+diak<-read.table("diak_18a.csv",sep=";",header=T)
 diak
 #elobb csinaljunk szamot a nembol
 nem=rep(0,times=dim(diak)[1])
@@ -167,8 +167,8 @@ lm1=lm(diak[,1]~diak[,2]+nem+diak[,7])
 summary(lm1)
 #a valszám jegy hogyan befolyásolja a testmagasságot?
 #ábrázoljuk, de valahogy több dimenzióban kéne
-#plot(diak$magasság)
-#lines(lm1$fitted.values)
+plot(diak$magasság)
+lines(lm1$fitted.values)
 #becslés hibaja
 plot(abs(lm1$fitted.values-diak$magasság),type='l')
 
